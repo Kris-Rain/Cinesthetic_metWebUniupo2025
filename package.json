@@ -1,5 +1,9 @@
 {
-  "name": "cinesthethic",
+  "name": "cinesthetic",
+  "engines": {
+    "node": "20.17.0",
+    "npm": "11.2.0"
+  },
   "version": "1.0.0",
   "description": "Movie database",
   "main": "server.js",
