@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="it">
+    
+<head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="description" content="Cinesthetic - Ratings, reviews and recommendations by people for you.">
+        <meta name="keywords" content="movies, recommendations, reviews, ratings, cinema, films, trailers, Cinesthetic">
+        <meta name="author" content="Kristian Rigo (matr. 20046665)">
+
+        <link rel="icon" type="Cinesthetic" href="/img/icon.png">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-SgOJa3DmI69IUzQ2PVdRZhwQ+dy64/BUtbMJw1MZ8t5HZApcHrRKUc4W0kG879m7" crossorigin="anonymous">
+        <link rel="stylesheet" href="/css/search-style.css">
+        <link rel="stylesheet" href="/css/homepage-style.css">
+        <link href='https://fonts.googleapis.com/css?family=Amatic SC' rel='stylesheet'>
+        <title>Cinesthetic: <%= query %> </title>
+    </head>
+<body>
+    <%- include('header') %>
+    <main>
+        <div class="container mt-4">
+            <% if (!searched) { %>
+                <div class="alert alert-info text-center search-alert">Inserisci almeno un carattere per cercare un film.</div>
+            <% } else if (results.length === 0) { %>
+                <div class="alert alert-warning text-center search-alert">Nessun film trovato.</div>
+            <% } else { %>
+                <h4 class="mb-3 result-label">Risultati per "<%= query %>":</h4>
+                <section class="mb-4">
+                    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5 g-4">
+                        <% results.sort((a, b) => b.avg_user_rating - a.avg_user_rating); %>
+                        <% results.forEach(function(film) { %>
+                            <div class="col">
+                                <div class="card">
+                                    <a href="/film/<%= film.film_id %>">
+                                        <img
+                                            src="img/<%= film.poster %>.jpg"
+                                            class="card-img-top"
+                                            alt="<%= film.film_title %>"
+                                        />
+                                        <span class="badge rating-badge">
+                                            <%= film.avg_user_rating ? film.avg_user_rating: 'N/A' %>
+                                        </span>
+                                    </a>
+                                    <h5 class="card-title">
+                                        <a href="/film/<%= film.film_id %>" id="film-name">
+                                            <%= film.film_title %>
+                                        </a>
+                                    </h5>
+                                </div>
+                            </div>
+                        <% }) %>
+                    </div>
+                </section>
+            <% } %>
+        </div>
+    </main>
+    <%- include('footer') %>
+    <script src="https://code.jquery.com/jquery-3.7.1.slim.min.js" integrity="sha256-kmHvs0B+OpCW5GVHUNjv9rOmY0IvSIRcf7zGUDTDQM8=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.min.js" integrity="sha384-VQqxDN0EQCkWoxt/0vsQvZswzTHUVOImccYmSyhJTp7kGtPed0Qcx8rK9h9YEgx+" crossorigin="anonymous"></script>
+</body>
+</html>

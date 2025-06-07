@@ -1,0 +1,42 @@
+.col-access {
+    text-align: center;
+}
+.access-form {
+    width: 500px;
+    margin-top: 50px;
+}
+.form-label {
+    color: #F5C518;
+}
+.col-access #register-btn, .col-access #login-btn {
+    margin-top: 10px;
+    border-radius: 18px;
+}
+.col-access #login-btn {
+    background-color: #F5C518;
+    color: #121212;
+}
+.col-access #login-btn:hover {
+    background-color: white;
+}
+.extra-label {
+    color: white;
+}
+.extra-label a {
+    color: #F5C518;
+    text-decoration: none;
+}
+.extra-label a:hover { 
+    color: white;
+}
+.subtitle-access {
+    color: #F5C518;
+    padding: 5px;
+    margin-top: 20px;
+}
+.access-title p {
+    color: white;
+}
+#input-username, #input-email, #input-password, #input-confirm-password, #input-date {
+    border-radius: 18px;
+}

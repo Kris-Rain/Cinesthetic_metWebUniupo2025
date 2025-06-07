@@ -1,0 +1,130 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="description" content="Cinesthetic - Ratings, reviews and recommendations by people for you.">
+        <meta name="keywords" content="movies, recommendations, reviews, ratings, cinema, films, trailers, Cinesthetic">
+        <meta name="author" content="Kristian Rigo (matr. 20046665)">
+
+        <link rel="icon" type="Cinesthetic" href="/img/icon.png">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" integrity="sha384-SgOJa3DmI69IUzQ2PVdRZhwQ+dy64/BUtbMJw1MZ8t5HZApcHrRKUc4W0kG879m7" crossorigin="anonymous">
+        <link rel="stylesheet" href="/css/admin-style.css">
+        <link rel="stylesheet" href="/css/homepage-style.css">
+        <link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Amatic SC'>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css"/>
+
+        <title>Cinesthetic: <%= title %></title>
+    </head>
+
+    <body>
+        <%- include('header') %>
+        <main>
+            <% if (message) { %>
+                <div class="alert alert-danger text-center floating-alert" id="alert-message"><%= message %></div>
+            <% } %>
+            <% if (success) { %>
+                <div class="alert alert-success text-center floating-alert" id="alert-success"><%= success %></div>
+            <% } %>
+            <script>
+                setTimeout(function() {
+                    var alertMsg = document.getElementById('alert-message');
+                    if(alertMsg) alertMsg.classList.add('hide');
+                    var alertSuccess = document.getElementById('alert-success');
+                    if(alertSuccess) alertSuccess.classList.add('hide');
+                }, 3500); // 3.5 secondi
+            </script>
+            <div class="container access-title">
+                <h1 class="text-center subtitle-access"><%= title %></h1>
+                <p class="text-center">
+                    <%= editMode ? `Compila il form qui sotto per modificare `+ film_title +`!` : `Compila il form qui sotto per aggiungere un film!` %>
+                </p>
+            </div>
+                <div class="container access-form">
+                    <form class="row g-3" method="POST" action="<%= editMode ? '/film/' + film_id + '/edit' : '/admin-panel' %>"">
+                        <div class="col-md-12">
+                            <label for="input-filmTitle" class="form-label">Nome film*</label>
+                            <input type="text" class="form-control" id="input-filmTitle" name="film_title" placeholder="Inserisci il nome del film" required value="<%= typeof film_title !== 'undefined' ? film_title : '' %>">
+                            <div id="filmTitle-validity" class="form-text"></div>
+                        </div>
+                        <div class="col-md-12">
+                            <label for="input-originalFilmTitle" class="form-label">Nome film originale</label>
+                            <input type="text" class="form-control" id="input-originalFilmTitle" name="original_film_title" placeholder="Inserisci il nome originale del film" value="<%= typeof original_film_title !== 'undefined' ? original_film_title : '' %>">
+                            <div id="originalFilmTitle-validity" class="form-text"></div>
+                        </div>
+                         <div class="col-md-12">
+                            <label for="input-poster" class="form-label">Poster*</label>
+                            <input type="text" class="form-control" id="input-poster" name="poster" placeholder="Inserisci il nome del film separando più parole da un trattino es: 'fight-club'" required value="<%= typeof poster !== 'undefined' ? poster : '' %>">
+                            <div id="originalFilmTitle-validity" class="form-text"></div>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="input-releaseDate" class="form-label">Anno di rilascio*</label>
+                            <input type="number" class="form-control" id="input-releaseDate" name="release_date" placeholder="Inserisci l'anno di rilascio del film" required value="<%= typeof release_date !== 'undefined' ? release_date : '' %>">
+                            <div id="releaseDate-validity" class="form-text"></div>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="input-duration" class="form-label">Durata (min)*</label>
+                            <input type="number" class="form-control" id="input-duration" name="duration" placeholder="Inserisci la durata in minuti" required value="<%= typeof duration !== 'undefined' ? duration : '' %>">
+                            <div id="duration-validity" class="form-text"></div>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="input-director" class="form-label">Regista*</label>
+                            <input type="text" class="form-control" id="input-director" name="director" placeholder="Inserisci il regista del film" required value="<%= typeof director !== 'undefined' ? director : '' %>">
+                            <div id="director-validity" class="form-text"></div>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="input-genre" class="form-label">Genere/i*</label>
+                            <select class="form-select" id="input-genre" name="genre" multiple required>
+                                <% allGenres.forEach(function(genre) { %>
+                                    <option value="<%= genre.genre_name %>"><%= genre.genre_name %></option>
+                                <% }) %>
+                            </select>
+                            <div id="genre-validity" class="form-text"></div>
+                        </div>
+                        <div class="col-md-12">
+                            <label for="input-screenwriter" class="form-label">Sceneggiatore/i*</label>
+                            <input type="text" class="form-control" id="input-screenwriter" name="screenwriter" placeholder="Inserisci i/gli sceneggiatore/i del film es: Mario Rossi, Luca Bianchi" required value="<%= typeof screenwriter !== 'undefined' ? screenwriter : '' %>">
+                            <div id="screenwriter-validity" class="form-text"></div>
+                        </div>
+                        <div class="col-md-12">
+                            <label for="input-trailer" class="form-label">Trailer*</label>
+                            <input type="text" class="form-control" id="input-trailer" name="trailer" placeholder="Inserisci solo l'id del video del trailer del film es: 5YnGhW4UEhc" required value="<%= typeof trailer !== 'undefined' ? trailer : '' %>">
+                            <div id="trailer-validity" class="form-text"></div>
+                        </div>
+                        <div class="col-md-12">
+                            <label for="input-plot" class="form-label">Trama*</label>
+                            <textarea class="form-control" id="input-plot" name="plot" rows="3" placeholder="Inserisci una breve sinossi del film" required><%= typeof plot !== 'undefined' ? plot : '' %></textarea>
+                            <div id="plot-validity" class="form-text"></div>
+                        </div>
+                        <% if (editMode) { %>
+                            <input type="hidden" name="film_id" value="<%= film_id %>">
+                        <% } %>
+                        <div class="col-md-12 col-access">
+                            <button class="btn btn-custom w-50 access-btn" id="insertFilm-btn">
+                                <%= editMode ? `Modifica film` : `Inserisci film` %>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </main>
+        <%- include('footer') %>
+
+        <script src="https://code.jquery.com/jquery-3.7.1.slim.min.js" integrity="sha256-kmHvs0B+OpCW5GVHUNjv9rOmY0IvSIRcf7zGUDTDQM8=" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.min.js" integrity="sha384-VQqxDN0EQCkWoxt/0vsQvZswzTHUVOImccYmSyhJTp7kGtPed0Qcx8rK9h9YEgx+" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+        <script>
+            $(document).ready(function() {
+                $('#input-genre').select2({
+                    placeholder: "Seleziona uno o più generi",
+                    width: '100%'
+                });
+
+                $('body').css('opacity', 1);
+            });
+        </script>
+    </body>
+</html>

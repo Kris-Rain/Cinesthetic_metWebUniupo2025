@@ -1,0 +1,149 @@
+<div class="main-content">
+    <div class="subtitle-container">
+        <h3 class="subtitle">Aggiunti di recente</h3>
+    </div>
+
+    <div class="row gx-0 row-cols-1 row-cols-md-3 justify-content-start film-list" id="film-list-recent">
+    <% latestMovies.forEach(function(film, index) { %>
+        <div class="col-card">
+            <div class="card h-100">
+                <a href="/film/<%= film.film_id %>">
+                    <img
+                        src="img/<%= film.poster %>.jpg"
+                        class="card-img-top"
+                        alt="<%= film.film_title %>"
+                    />
+                    <span class="badge rating-badge">
+                        <%= film.avg_user_rating ? film.avg_user_rating : 'N/A' %>
+                    </span>
+                </a>
+                <h5 class="card-title">
+                    <% console.log(film.film_id) %>
+                    <a href="/film-page/<%= film.film_id %>" id="film-name">
+                        <%= film.film_title %>
+                    </a>
+                </h5>
+            </div>
+        </div>
+    <% }) %>
+    </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const filmList = document.getElementById("film-list-recent");
+
+            filmList.addEventListener("scroll", () => {
+                // Check if the user has scrolled at all
+                if (filmList.scrollLeft > 0) {
+                    filmList.classList.add("is-hiding");
+                    filmList.classList.remove("is-fading");
+                } else {
+                    filmList.classList.add("is-fading");
+                    filmList.classList.remove("is-hiding");
+                }
+            });
+        });
+    </script>
+
+    <div class="subtitle-container">
+        <h3 class="subtitle">Trending</h3> <!-- Sostituito "Migliori recensioni" -->
+    </div>
+    <div
+        class="row gx-0 row-cols-1 row-cols-md-3 justify-content-start film-list"
+        id="film-list-trending"
+    >
+    <% trendingMovises.forEach(function(review, index) { %>
+        <% if(review.rating > 8) { %>
+            <% latestMovies.forEach(function(film, index) { %>
+                <% if(review.film_id == film.film_id) { %>
+                    <div class="col-card">
+                        <div class="card h-100">
+                            <a href="/film/<%= film.film_id %>">
+                                <img
+                                    src="img/<%= film.poster %>.jpg"
+                                    class="card-img-top"
+                                    alt="<%= film.film_title %>"
+                                />
+                                <span class="badge rating-badge">
+                                    <%= film.avg_user_rating ? film.avg_user_rating : 'N/A' %>
+                                </span>
+                            </a>
+                            <h5 class="card-title">
+                                <% console.log(film.film_id) %>
+                                <a href="/film-page/<%= film.film_id %>" id="film-name">
+                                    <%= film.film_title %>
+                                </a>
+                            </h5>
+                        </div>
+                    </div>
+                <% } %>
+            <% }) %>
+        <% } %>
+    <% }) %>
+    </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const filmList = document.getElementById("film-list-trending");
+
+            filmList.addEventListener("scroll", () => {
+                // Check if the user has scrolled at all
+                if (filmList.scrollLeft > 0) {
+                    filmList.classList.add("is-hiding");
+                    filmList.classList.remove("is-fading");
+                } else {
+                    filmList.classList.add("is-fading");
+                    filmList.classList.remove("is-hiding");
+                }
+            });
+        });
+    </script>
+    <div class="subtitle-container">
+        <h3 class="subtitle">Consigliati</h3> <!-- Sostituito "I più votati" -->
+    </div>
+    <div
+        class="row gx-0 row-cols-1 row-cols-md-3 justify-content-start film-list"
+        id="film-list-recommended"
+    >
+    <% recommemdedMovies.sort((a, b) => b.avg_user_rating - a.avg_user_rating); %>
+    <% recommemdedMovies.forEach(function(film, index) { %>
+        <% if(film.avg_user_rating > 8) { %>
+            <div class="col-card">
+                <div class="card">
+                    <a href="/film/<%= film.film_id %>">
+                        <img
+                            src="img/<%= film.poster %>.jpg"
+                            class="card-img-top"
+                            alt="<%= film.film_title %>"
+                        />
+                        <span class="badge rating-badge">
+                            <%= film.avg_user_rating ? film.avg_user_rating : 'N/A' %>
+                        </span>
+                    </a>
+                    <h5 class="card-title">
+                        <% console.log(film.film_id) %>
+                        <a href="/film-page/<%= film.film_id %>" id="film-name">
+                            <%= film.film_title %>
+                        </a>
+                    </h5>
+                </div>
+            </div>
+        <% } %>
+    <% }) %>
+    </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const filmList = document.getElementById("film-list-recommended");
+
+            filmList.addEventListener("scroll", () => {
+                // Check if the user has scrolled at all
+                if (filmList.scrollLeft > 0) {
+                    filmList.classList.add("is-hiding");
+                    filmList.classList.remove("is-fading");
+                } else {
+                    filmList.classList.add("is-fading");
+                    filmList.classList.remove("is-hiding");
+                }
+            });
+        });
+    </script>
+</div>
+</main>

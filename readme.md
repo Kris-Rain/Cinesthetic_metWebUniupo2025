@@ -1,0 +1,3 @@
+Il file "index.html" è la home del sito, cliccando sul film "Il Padrino" in "Aggiunti di recente" è possibile accedere alla pagina dedicata al film, "film.html".
+Ho creato le pagine statiche simulando un utente già registrato, il quale, una volta reso dinamico, potrà recensire e valutare i film e le recensioni degli altri utenti attraverso un "mi piace" o un "non mi piace".
+Il sito è responsive per la maggior parte dei dispositivi e grandezze degli schermi.

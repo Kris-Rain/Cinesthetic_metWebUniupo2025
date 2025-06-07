@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="description" content="Cinesthetic - Ratings, reviews and recommendations by people for you.">
+        <meta name="keywords" content="movies, recommendations, reviews, ratings, cinema, films, trailers, Cinesthetic">
+        <meta name="author" content="Kristian Rigo (matr. 20046665)">
+
+        <link rel="icon" type="Cinesthetic" href="/img/icon.png">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-SgOJa3DmI69IUzQ2PVdRZhwQ+dy64/BUtbMJw1MZ8t5HZApcHrRKUc4W0kG879m7" crossorigin="anonymous">
+        <link rel="stylesheet" href="/css/search-style.css">
+        <link rel="stylesheet" href="/css/homepage-style.css">
+        <link href='https://fonts.googleapis.com/css?family=Amatic SC' rel='stylesheet'>
+        <title> Cinesthetic: <%= title %> </title>
+    </head>
+<body>
+    <%- include('header') %>
+    <main>
+        <div class="container mt-4">
+            <h1 class="mb-4 desc-label"><%= title %></h1>
+            <div class="row">
+                <!-- Sidebar filtri -->
+                <aside class="col-md-3 mb-4">
+                    <div class="card p-3">
+                        <h5>Filtra per</h5>
+                        <form method="get" action="/filter">
+                            <input type="hidden" name="filter" value="<%= filter %>">
+                            <!-- Genere -->
+                            <div class="mb-3">
+                                <label for="genre" class="form-label">Genere</label>
+                                <select class="form-select" id="genre-select" name="genre">
+                                    <option value="">Tutti</option>
+                                    <% allGenres.forEach(genre => { %>
+                                        <option value="<%= genre.genre_name %>"><%= genre.genre_name %></option>
+                                    <% }) %>
+                                </select>
+                            </div>
+                            <!-- Rating minimo -->
+                            <div class="mb-3">
+                                <label for="minRating" class="form-label">Rating minimo</label>
+                                <input type="number" step="0.1" min="0" max="10" class="form-control" id="minRating-select" name="minRating">
+                            </div>
+                            <!-- Durata massima -->
+                            <div class="mb-3">
+                                <label for="maxDuration" class="form-label">Durata massima (min)</label>
+                                <input type="number" min="0" class="form-control" id="maxDuration-select" name="maxDuration">
+                            </div>
+                            <button type="submit" class="btn btn-primary w-100" id="apply-filters">Applica filtri</button>
+                        </form>
+                    </div>
+                </aside>
+                <!-- Colonna film -->
+                <section class="mb-4 col-md-9">
+                    <div class="row row-cols-1 row-cols-md-4 g-4">
+                        <% results.sort((a, b) => b.avg_user_rating - a.avg_user_rating); %>
+                        <% results.forEach(function(film) { %>
+                            <div class="col">
+                                <div class="card h-100">
+                                    <a href="/film/<%= film.film_id %>">
+                                        <img
+                                            src="img/<%= film.poster %>.jpg"
+                                            class="card-img-top"
+                                            alt="<%= film.film_title %>"
+                                        />
+                                        <span class="badge rating-badge">
+                                            <%= film.avg_user_rating ? film.avg_user_rating : 'N/A' %>
+                                        </span>
+                                    </a>
+                                    <h5 class="card-title">
+                                        <a href="/film/<%= film.film_id %>" id="film-name">
+                                            <%= film.film_title %>
+                                        </a>
+                                    </h5>
+                                </div>
+                            </div>
+                        <% }) %>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </main>
+    <%- include('footer') %>
+    <script src="https://code.jquery.com/jquery-3.7.1.slim.min.js" integrity="sha256-kmHvs0B+OpCW5GVHUNjv9rOmY0IvSIRcf7zGUDTDQM8=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.min.js" integrity="sha384-VQqxDN0EQCkWoxt/0vsQvZswzTHUVOImccYmSyhJTp7kGtPed0Qcx8rK9h9YEgx+" crossorigin="anonymous"></script>
+</body>
+</html>

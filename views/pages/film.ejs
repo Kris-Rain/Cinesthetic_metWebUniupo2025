@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="description" content="Cinesthetic - Ratings, reviews and recommendations by people for you.">
+        <meta name="keywords" content="movies, recommendations, reviews, ratings, cinema, films, trailers, Cinesthetic">
+        <meta name="author" content="Kristian Rigo (matr. 20046665)">
+
+        <link rel="icon" type="Cinesthetic" href="/img/icon.png">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-SgOJa3DmI69IUzQ2PVdRZhwQ+dy64/BUtbMJw1MZ8t5HZApcHrRKUc4W0kG879m7" crossorigin="anonymous">
+        <link rel="stylesheet" href="/css/film-style.css">
+        <link href='https://fonts.googleapis.com/css?family=Amatic SC' rel='stylesheet'>
+        
+        <title>Cinesthetic: <%= filmById.film_title %> </title>
+    </head>
+    <body>
+        <%- include('header') %>
+        <main>
+            <% if (message) { %>
+                <div class="alert alert-danger text-center floating-alert" id="alert-message"><%= message %></div>
+            <% } %>
+            <% if (success) { %>
+                <div class="alert alert-success text-center floating-alert" id="alert-success"><%= success %></div>
+            <% } %>
+            <script>
+                setTimeout(function() {
+                    var alertMsg = document.getElementById('alert-message');
+                    if(alertMsg) alertMsg.classList.add('hide');
+                    var alertSuccess = document.getElementById('alert-success');
+                    if(alertSuccess) alertSuccess.classList.add('hide');
+                }, 3500); // 3.5 secondi
+            </script>
+            <!--Dettagli principali del film con informazioni come la locandina, trailer, nome del film, nome del film originale (se esistente),
+            regia, sceneggiatura, anno di uscita e genere. Queste ultime informazioni sono delle query che permettono la ricerca veloce di quel regista,
+            sceneggiatore o genere, mostrando altri film con le stesse informazioni. Seguono la trama e le recensioni degli utenti che possono essere valutate
+            con un "mi piace" o un "non mi piace". Per aggiungere le recensioni è presente un pulsante che aprirà una modale da compilare.-->
+            <div class="d-flex justify-content-center">
+                <div class="d-flex content">
+                    <div class="film">
+                        <div class="card-caption">
+                            <!--Nome del film-->
+                            <h3 id="film-name"><%= filmById.film_title %></h3>
+                            <!--Nome del film originale-->
+                            <% if (filmById.original_film_title != null) { %>
+                                <span>Titolo originale: 
+                                    <span id="original-film-name"><%= filmById.original_film_title %></span>
+                                </span>
+                            <% } %>
+                            <!-- Valutazione -->
+                            <div class="avg-rating">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="#F5C518" class="bi bi-star-fill" viewBox="0 0 16 16">
+                                    <path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z"/>
+                                </svg>
+                                <% if (filmById.avg_user_rating != null) { %>
+                                    <span id="user-rating"><%= filmById.avg_user_rating %></span>
+                                    <span class="fixed-avg-rating">/10</span>
+                                <% } else { %>
+                                    <span id="user-rating">N/A</span>
+                                <% } %>
+                            </div>
+                            <hr id="divider">
+                        </div>
+                        <!-- Locandina -->
+                        <img src="/img/<%= filmById.poster %>.jpg" class="poster-film" id="poster" alt="Locandina del film <%= filmById.film_title %>">
+                    </div>
+                    <!-- Trailer -->
+                    <div id="trailer">
+                        <iframe width="100%" height="100%" src="<%= filmById.trailer %>" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+                    </div>
+                </div>
+            </div>
+            <div class="d-flex justify-content-center">
+                <div class="main-content position-relative">
+                    <!-- Descrizione del film -->
+                    <div class="d-flex flex-row align-items-start">
+                        <div class="film-description flex-grow-1">
+                            <!-- Regista -->
+                            <h6>Regia:
+                                <a type="button" class="badge rounded-pill" id="director" href="/search?q=<%= filmById.director %>"><%= filmById.director %></a>
+                            </h6>
+                            <!-- Sceneggiatore -->
+                            <h6>Sceneggiatura:
+                                <% screenWritersByFilmId.forEach((screenwriter) => { %>
+                                    <% if (screenwriter.screenwriter_name != null) { %>
+                                        <a type="button" class="badge rounded-pill" id="screenwriter" href="/search?q=<%= screenwriter.screenwriter_name %>"><%= screenwriter.screenwriter_name %></a>
+                                    <% } %>
+                                <% }) %>
+                            </h6>
+                            <!-- Anno di uscita -->
+                            <h6>
+                                Anno di uscita:
+                                <span class="badge rounded-pill" id="release-date"><%= filmById.release_date %></span>
+                            </h6>
+                            <!-- Genere -->
+                            <h6>
+                                Genere:
+                                <% genresByFilmId.forEach((genre) => { %>
+                                    <% if (genre.genre_name != null) { %>
+                                        <a type="button" class="badge rounded-pill" id="film-genre" href="/search?q=<%= genre.genre_name %>"><%= genre.genre_name %></a>
+                                    <% } %>
+                                <% }) %>
+                            </h6>
+                            <!-- Durata -->
+                            <h6>
+                                Durata:
+                                <span class="badge rounded-pill" id="duration"><%= filmById.duration %> min</span>
+                            </h6>
+                        </div>
+                        <% if (isAdmin) { %>
+                            <div class="d-flex flex-column align-items-end ms-3 admin-actions">
+                                <a href="/film/<%= filmById.film_id %>/edit" class="btn btn-warning mb-2 modify-film-btn">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-pencil" viewBox="0 0 16 16">
+                                        <path d="M12.146.854a.5.5 0 0 1 .708 0l2.292 2.292a.5.5 0 0 1 0 .708l-9.439 9.439a.5.5 0 0 1-.168.11l-4 1.5a.5.5 0 0 1-.65-.65l1.5-4a.5.5 0 0 1 .11-.168l9.439-9.439zM11.207 2.5 13.5 4.793 12.5 5.793 10.207 3.5l1-1zM10.5 4.207 12.793 6.5l-8.439 8.439-1.5.5.5-1.5L10.5 4.207z"/>
+                                    </svg>
+                                    Modifica film
+                                </a>
+                                <form class="delete-film-form" method="POST" action="/film/<%= filmById.film_id %>/delete" onsubmit="return confirm('Sei sicuro di voler eliminare questo film?');">
+                                    <button type="submit" class="btn btn-danger">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
+                                            <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5.5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6zm3 .5a.5.5 0 0 1 .5-.5h.5a.5.5 0 0 1 0 1h-.5a.5.5 0 0 1-.5-.5z"/>
+                                            <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1-1V1a1 1 0 0 0-1-1h-7a1 1 0 0 0-1 1v1a1 1 0 0 1-1 1H1.5a.5.5 0 0 0 0 1h1.086l.82 9.193A2 2 0 0 0 5.397 15h5.206a2 2 0 0 0 1.991-1.807l.82-9.193H14.5a.5.5 0 0 0 0-1h-1zm-11-1V1a2 2 0 0 1 2-2h7a2 2 0 0 1 2 2v1h-11z"/>
+                                        </svg>
+                                        Elimina film
+                                    </button>
+                                </form>
+                            </div>
+                        <% } %>
+                    </div>
+                    <!-- Trama -->
+                    <div class="plot">
+                        <h3>Trama</h3>
+                        <p id="plot-description"><%= filmById.plot %></p>
+                    </div>
+                    <!-- Recensioni -->
+                    <div class="reviews">
+                        <h3>Recensioni</h3>
+                        <% if (isLogged) { %>
+                            <!-- Button trigger modal -->
+                            <button type="button" class="btn review-btn p-0" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-plus-lg" viewBox="0 0 16 16">
+                                    <path fill-rule="evenodd" d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2Z"/>
+                                </svg>
+                                Aggiungi una recensione
+                            </button>
+                        <% } else { %>
+                            <div class="custom-alert text-center mt-3">
+                                <a href="/accedi" class="alert-link">Accedi</a> o <a href="/registrati" class="alert-link">registrati</a> per lasciare una recensione!
+                            </div>
+                        <% } %>
+                        <!-- Modal -->
+                        <div class="modal modal-lg fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <img id="poster" src="../img/<%= filmById.poster %>.jpg" alt="Locandina del film <%= filmById.film_title %>">
+                                        <div class="modal-title">
+                                            <h1 class="fs-3" id="staticBackdropLabel"><%= filmById.film_title %></h1>
+                                            <% if (filmById.original_film_name != null) { %>
+                                                <span>Titolo originale: 
+                                                    <span id="original-film-name"><%= filmById.film_title %></span>
+                                                </span>
+                                            <% } %>
+                                        </div>
+                                        <button type="button" id="cls-btn" data-bs-dismiss="modal" aria-label="Close">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="#F5C518" class="bi bi-x" viewBox="0 0 16 16">
+                                                <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                    <hr id="divider">
+                                    <div class="modal-body">
+                                        <form method="POST" action="/film/<%= filmById.film_id %>/review">
+                                            <label for="star-rating" class="form-label">Inserisci un voto</label>
+                                            <div class="ratings" id="star-rating">
+                                                <% for(let i=1; i<=10; i++) { %>
+                                                    <span class="star" data-value="<%= i %>">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-star-fill rating-color" viewBox="0 0 16 16">
+                                                            <path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z"/>
+                                                        </svg>
+                                                    </span>
+                                                <% } %>
+                                                <input type="hidden" name="rating" id="rating-input" required>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="review-title" class="form-label">Scrivi un titolo per la tua recensione qui</label>
+                                                <input type="text" class="form-control" id="review-title" name="title" required>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="review-comment" class="form-label">Scrivi la tua recensione qui</label>
+                                                <textarea class="form-control" id="review-comment" name="comment" rows="3" required></textarea>
+                                            </div>
+                                            <hr id="divider">
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn review-btn-end" data-bs-dismiss="modal">Chiudi</button>
+                                                <button type="submit" class="btn review-btn-end">Invia</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <% if (reviews && reviews.length > 0) { %>
+                            <% reviews.forEach(function(review) { %>
+                                <div class="card user-review">
+                                    <div class="card-body">
+                                        <div id="user-name-rating">
+                                            <span class="card-title"><%= review.username %></span>
+                                        </div>
+                                        <div class="ratings">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#F5C518" class="bi bi-star-fill" viewBox="0 0 16 16">
+                                                <path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z"/>
+                                            </svg>
+                                            <span id="user-rating"><%= review.rating %></span>
+                                            <span class="fixed-rating">/10</span>
+                                        </div>
+                                        <h6 class="review-title"><%= review.title || '' %></h6>
+                                        <p class="card-text"><%= review.comment %></p>
+                                    </div>
+                                    <div class="thumbs d-flex mx-3 my-3">
+                                        <form method="POST" action="/film/<%= filmById.film_id %>/review/<%= review.review_id %>/thumbs-up" class="me-2 d-inline">
+                                            <button type="submit" class="btn btn-link p-0 mb-2">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-hand-thumbs-up-fill" viewBox="0 0 16 16">
+                                                    <path d="M6.956 1.745C7.021.81 7.908.087 8.864.325l.261.066c.463.116.874.456 1.012.965.22.816.533 2.511.062 4.51a9.84 9.84 0 0 1 .443-.051c.713-.065 1.669-.072 2.516.21.518.173.994.681 1.2 1.273.184.532.16 1.162-.234 1.733.058.119.103.242.138.363.077.27.113.567.113.856 0 .289-.036.586-.113.856-.039.135-.09.273-.16.404.169.387.107.819-.003 1.148a3.163 3.163 0 0 1-.488.901c.054.152.076.312.076.465 0 .305-.089.625-.253.912C13.1 15.522 12.437 16 11.5 16H8c-.605 0-1.07-.081-1.466-.218a4.82 4.82 0 0 1-.97-.484l-.048-.03c-.504-.307-.999-.609-2.068-.722C2.682 14.464 2 13.846 2 13V9c0-.85.685-1.432 1.357-1.615.849-.232 1.574-.787 2.132-1.41.56-.627.914-1.28 1.039-1.639.199-.575.356-1.539.428-2.59z"/>
+                                                </svg>
+                                            </button>
+                                            <span><%= review.thumbs_up %></span>
+                                        </form>
+                                        <form method="POST" action="/film/<%= filmById.film_id %>/review/<%= review.review_id %>/thumbs-down" class="me-2 d-inline">
+                                            <button type="submit" class="btn btn-link p-0 mb-2">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-hand-thumbs-down-fill" viewBox="0 0 16 16">
+                                                    <path d="M6.956 14.534c.065.936.952 1.659 1.908 1.42l.261-.065a1.378 1.378 0 0 0 1.012-.965c.22-.816.533-2.512.062-4.51.136.02.285.037.443.051.713.065 1.669.071 2.516-.211.518-.173.994-.68 1.2-1.272a1.896 1.896 0 0 0-.234-1.734c.058-.118.103-.242.138-.362.077-.27.113-.568.113-.856 0-.29-.036-.586-.113-.857a2.094 2.094 0 0 0-.16-.403c.169-.387.107-.82-.003-1.149a3.162 3.162 0 0 0-.488-.9c.054-.153.076-.313.076-.465a1.86 1.86 0 0 0-.253-.912C13.1.757 12.437.28 11.5.28H8c-.605 0-1.07.08-1.466.217a4.823 4.823 0 0 0-.97.485l-.048.029c-.504.308-.999.61-2.068.723C2.682 1.815 2 2.434 2 3.279v4c0 .851.685 1.433 1.357 1.616.849.232 1.574.787 2.132 1.41.56.626.914 1.28 1.039 1.638.199.575.356 1.54.428 2.591z"/>
+                                                </svg>
+                                            </button>
+                                            <span><%= review.thumbs_down %></span>
+                                        </form>
+                                    </div>
+                                </div>
+                            <% }); %>
+                        <% } else { %>
+                            <div class="custom-alert text-center mt-3">
+                                Nessuna recensione presente.
+                            </div>
+                        <% } %>
+                    </div>
+                </div>
+            </div>
+        </main>
+        <%- include('footer')%>
+        <script src="https://code.jquery.com/jquery-3.7.1.slim.min.js" integrity="sha256-kmHvs0B+OpCW5GVHUNjv9rOmY0IvSIRcf7zGUDTDQM8=" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.min.js" integrity="sha384-VQqxDN0EQCkWoxt/0vsQvZswzTHUVOImccYmSyhJTp7kGtPed0Qcx8rK9h9YEgx+" crossorigin="anonymous"></script>
+        <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const stars = document.querySelectorAll('#star-rating .star');
+            const ratingInput = document.getElementById('rating-input');
+            let selectedRating = 0;
+
+            stars.forEach((star, index) => {
+                star.addEventListener('mouseover', () => {
+                    highlightStars(index + 1);
+                });
+                star.addEventListener('mouseout', () => {
+                    highlightStars(selectedRating);
+                });
+                star.addEventListener('click', () => {
+                    selectedRating = index + 1;
+                    highlightStars(selectedRating);
+                    // Imposta il valore dell'input nascosto al rating selezionato
+                    ratingInput.value = selectedRating;
+                });
+            });
+
+            function highlightStars(rating) {
+                stars.forEach((star, i) => {
+                    const svg = star.querySelector('svg');
+                    if (i < rating) {
+                        svg.classList.add('active');
+                    } else {
+                        svg.classList.remove('active');
+                    }
+                });
+            }
+        });
+        </script>
+    </body>
+</html>

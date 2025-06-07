@@ -1,0 +1,46 @@
+<main>
+    <% if (message) { %>
+        <div class="alert alert-danger text-center floating-alert" id="alert-message"><%= message %></div>
+    <% } %>
+    <% if (success) { %>
+        <div class="alert alert-success text-center floating-alert" id="alert-success"><%= success %></div>
+    <% } %>
+    <script>
+        setTimeout(function() {
+            var alertMsg = document.getElementById('alert-message');
+            if(alertMsg) alertMsg.classList.add('hide');
+            var alertSuccess = document.getElementById('alert-success');
+            if(alertSuccess) alertSuccess.classList.add('hide');
+        }, 3500); // 3.5 secondi
+    </script>
+
+    <div class="carousel slide d-flex" id="carouselAutoPlaying" data-bs-ride="carousel">
+        <div class="carousel-inner">
+            <% for(let i = 0; i < allMovies.length; i++) { %>
+                <% if(i==0) { %>
+                    <div class="carousel-item img-gradient active">
+                        <img src="img/carousel/<%= allMovies[i].poster %>_carousel.jpg" class="d-block w-100" id="carousel-img" alt="<%= allMovies[i].film_title %>">
+                        <div class="carousel-caption">
+                            <h5><%= allMovies[i].film_title %> (<%= allMovies[i].release_date %>)</h5>
+                        </div>
+                    </div>
+                <% } else { %>
+                    <div class="carousel-item img-gradient">
+                        <img src="img/carousel/<%= allMovies[i].poster %>_carousel.jpg" class="d-block w-100" id="carousel-img" alt="<%= allMovies[i].film_title %>">
+                        <div class="carousel-caption">
+                            <h5><%= allMovies[i].film_title %> (<%= allMovies[i].release_date %>)</h5>
+                        </div>
+                    </div>
+                <% } %>
+            <% } %>
+            
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#carouselAutoPlaying" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#carouselAutoPlaying" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+        </button>
+    </div>
