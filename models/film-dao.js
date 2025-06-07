@@ -128,31 +128,6 @@ exports.getBestReviews = function () {
     });
 };
 
-exports.getCarouselMovies = function () {
-    return new Promise((resolve, reject) => {
-        const sql = `
-            SELECT poster FROM Film
-        `;
-        db.all(sql, [], function (err, rows) {
-            if (err) reject(err);
-            else resolve(rows);
-        });
-    });
-};
-
-exports.addCarouselImage = function (imageName, filmId) {
-    return new Promise((resolve, reject) => {
-        const sql = `
-            INSERT INTO Carousel (image, film_id)
-            VALUES (?, ?)
-        `;
-        db.run(sql, [imageName, filmId], function (err) {
-            if (err) reject(err);
-            else resolve(this.lastID);
-        });
-    });
-};
-
 exports.getTrendingMovies = function () {
     return new Promise((resolve, reject) => {
         const sql = `

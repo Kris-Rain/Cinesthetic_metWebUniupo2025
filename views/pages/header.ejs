@@ -42,7 +42,7 @@
                             />
                         </svg>
 
-                        <span id="brand-name">Cinesthethic</span>
+                        <span id="brand-name">Cinesthetic</span>
                     </a>
                     <button
                         type="button"
@@ -71,7 +71,7 @@
                             placeholder="Cerca un film per titolo, genere o regista"
                             name="q"
                         />
-                        <button class="btn" type="submit">
+                        <button class="btn search-btn" type="submit">
                             <svg
                                 xmlns="http://www.w3.org/2000/svg"
                                 width="24"
@@ -91,22 +91,83 @@
                     </form>
                     <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
                         <nav class="nav flex-column nav-offcanvas">
-                            <a class="nav-link" href="#">Film</a>
-                            <a class="nav-link" href="#">Registi</a>
-                            <a class="nav-link" href="#">Generi</a>
+                            <div class="dropdown">
+                                <a class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Film
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-end dropdown-user">
+                                    <li><a class="dropdown-item" href="/filter?filter=best">Migliori recensioni</a></li>
+                                    <li><a class="dropdown-item" href="/filter?filter=top">Più votati</a></li>
+                                </ul>
+                            </div>
+                            <div class="dropdown">
+                                <a class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Generi
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-end dropdown-user">
+                                    <% allGenres.forEach(genre => { %>
+                                        <li>
+                                            <a class="dropdown-item" href="/search?q=<%= genre.genre_name %>">
+                                                <%= genre.genre_name %>
+                                            </a>
+                                        </li>
+                                    <% }) %>
+                                </ul>
+                            </div>
                         </nav>
                         <hr id="divider" />
                         <nav class="nav flex-column nav-offcanvas">
-                            <a
-                                id="user-name-offcanvas"
-                                class="nav-link"
-                                href="#"
-                                >Profilo</a>
-                            <a
-                                id="user-name-offcanvas"
-                                class="nav-link"
-                                href="#"
-                                >Esci</a>
+                            <% if(isLogged) { %>
+                            <div class="navbar-brand dropdown" href="#">
+                                <a
+                                    id="user-name-offcanvas"
+                                    href="#"
+                                    role="button"
+                                    data-bs-toggle="dropdown"
+                                    aria-expanded="false"
+                                >
+                                    <%= user.username %>
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-end dropdown-user">
+                                    <li>
+                                        <a class="dropdown-item" href="#">Il tuo profilo</a>
+                                    </li>
+                                    <li><hr class="dropdown-divider"/></li>
+                                    <% if(user && user.type === 0) { %>
+                                        <li><a class="dropdown-item" href="/admin-panel">Inserisci un film</a></li>
+                                        <li><hr class="dropdown-divider"/></li>
+                                    <% } %>
+                                    <li>
+                                        <form method="POST" action="/accedi/logout">
+                                            <button class="dropdown-item" type="submit" id="logout-btn">
+                                                <svg
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    width="16"
+                                                    height="16"
+                                                    fill="currentColor"
+                                                    class="bi bi-box-arrow-left"
+                                                    viewBox="0 0 16 16"
+                                                >
+                                                    <path
+                                                        fill-rule="evenodd"
+                                                        d="M6 12.5a.5.5 0 0 0 .5.5h8a.5.5 0 0 0 .5-.5v-9a.5.5 0 0 0-.5-.5h-8a.5.5 0 0 0-.5.5v2a.5.5 0 0 1-1 0v-2A1.5 1.5 0 0 1 6.5 2h8A1.5 1.5 0 0 1 16 3.5v9a1.5 1.5 0 0 1-1.5 1.5h-8A1.5 1.5 0 0 1 5 12.5v-2a.5.5 0 0 1 1 0v2z"
+                                                    />
+                                                    <path
+                                                        fill-rule="evenodd"
+                                                        d="M.146 8.354a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L1.707 7.5H10.5a.5.5 0 0 1 0 1H1.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3z"
+                                                    />
+                                                </svg>
+                                                    Logout
+                                            </button>
+                                        </form>
+                                    </li>
+                                </ul>
+                            </div>
+                            <% } else { %>
+                            <ul class="navbar-brand navbar-access-offcanvas mb-lg-0">
+                                <li><a type="button" class="btn" id="login-btn-offcanvas" href="/accedi" aria-expanded="false">Accedi</a></li>
+                            </ul>
+                            <% } %>
                         </nav>
                     </ul>
                 </div>
@@ -128,7 +189,6 @@
                         />
                     </svg>
                     <span id="brand-name">Cinesthetic</span>
-
                 </a>
                 <nav class="nav" id="nav-links">
                     <div class="dropdown">
@@ -140,7 +200,6 @@
                             <li><a class="dropdown-item" href="/filter?filter=top">Più votati</a></li>
                         </ul>
                     </div>
-                    <!-- <a class="nav-link" href="#">Registi</a> -->
                     <div class="dropdown">
                         <a class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             Generi

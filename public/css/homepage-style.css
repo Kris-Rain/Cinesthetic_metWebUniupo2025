@@ -16,12 +16,12 @@ header{
     top: 0;
     z-index: 100;
 }
-@media (min-width: 961px){
+@media only screen and (min-width: 961px){
     .navbar-toggler{
         display: none !important;
     }
 }
-@media (max-width: 1315px){
+@media only screen and (max-width: 1315px){
     #search-bar-offcanvas{
         width: 350px !important;
         margin-right: auto;
@@ -32,7 +32,7 @@ header{
         margin-right: 125px !important;
     }
 }
-@media (max-width: 960px){
+@media only screen and (max-width: 960px){
     #search-bar-btn{
         display: none !important;
     }
@@ -42,13 +42,16 @@ header{
     #user-name{
         display: none !important;
     }
+    #login-btn {
+        display: none !important;
+    }
     .carousel{
         width: fit-content !important;
         padding: 5px !important;
         margin-top: 15px !important;
     }
 }
-@media (max-width: 470px){
+@media only screen and (max-width: 470px){
     .offcanvas.offcanvas-start{
         width: 300px !important;
     }
@@ -56,15 +59,6 @@ header{
         width: 250px !important;
         margin-right: auto;
         margin-left: auto;
-    }
-    #see-all-1{
-        bottom: 250px !important;
-    }
-    #see-all-2{
-        bottom: -405px !important;
-    }
-    #see-all-3{
-        bottom: -815px !important;
     }
     #film-list {
         height: 230px !important; /* Set a fixed height for the film list */
@@ -90,22 +84,22 @@ header{
         margin: 0 !important; /* Remove left margin */
     }
 }
-@media (max-width: 1150px){
+@media only screen and (max-width: 1150px){
     .carousel-item{
         height: fit-content !important;
     }
 }
-@media (max-width: 570px){
+@media only screen and (max-width: 570px){
    #title-brand-footer{
     display: none !important;
    } 
 }
-@media (min-width: 1690px){
+@media only screen and (min-width: 1690px){
     .carousel-item{
         height: 650px !important;
     }
 }
-@media (min-width: 2560px){
+@media only screen and (min-width: 2560px){
     .carousel-item{
         height: 1000px !important;
     }
@@ -149,6 +143,10 @@ header{
 .nav-link:focus{
     display: none;
 }
+.nav-link.show {
+    color: white !important;
+}
+
 #title-brand{
     font-family: "Amatic SC";
     font-size: 30px;
@@ -163,7 +161,7 @@ header{
     color: #F5C518;
     text-decoration: none;
 }
-.navbar-access {
+.navbar-access, .navbar-access-offcanvas {
     text-align: center;
     padding-left: 0;
     font-size: small;
@@ -185,11 +183,11 @@ header{
 #register-btn:hover {
     background-color: white;
 }
-#login-btn {
+#login-btn, #login-btn-offcanvas {
     background-color: #F5C518;
     border-radius: 18px;
 }
-#login-btn:hover {
+#login-btn:hover, #login-btn-offcanvas:hover {
     background-color: white;
     color: #121212;
 }
