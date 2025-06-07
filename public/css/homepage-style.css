@@ -112,6 +112,19 @@ header{
     background-color: #1F1F1F;
     border: none;
 }
+
+ul.navbar-access,
+ul.navbar-access-offcanvas {
+    list-style: none;
+    padding-left: 0;
+    margin-bottom: 0;
+}
+
+.offcanvas-header{
+    background-color: #1F1F1F;
+    border-bottom: 0;
+    justify-content: space-between;
+}
 .offcanvas, .offcanvas-start{
     background-color: #1F1F1F;
 }
@@ -235,6 +248,7 @@ header{
 .navbar{
     background-color: #121212;
 }
+
 .search-btn{
     border-color: #121212;
     background-color: white;

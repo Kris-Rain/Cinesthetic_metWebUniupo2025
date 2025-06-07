@@ -57,6 +57,9 @@ header{
     #user-name{
         display: none !important;
     }
+    #login-btn {
+        display: none !important;
+    }
 }
 @media only screen and (max-width: 470px){
     .offcanvas.offcanvas-start{
@@ -99,6 +102,19 @@ header{
     background-color: #1F1F1F;
     border: none;
     align-self: flex-start;
+}
+
+ul.navbar-access,
+ul.navbar-access-offcanvas {
+    list-style: none;
+    padding-left: 0;
+    margin-bottom: 0;
+}
+
+.offcanvas-header{
+    background-color: #1F1F1F;
+    border-bottom: 0;
+    justify-content: space-between;
 }
 .offcanvas, .offcanvas-start{
     background-color: #1F1F1F;
@@ -147,7 +163,7 @@ header{
     color: #F5C518;
     text-decoration: none;
 }
-.navbar-access{
+.navbar-access, .navbar-access-offcanvas {
     text-align: center;
     padding-left: 0;
     font-size: small;
@@ -169,11 +185,11 @@ header{
 #register-btn:hover {
     background-color: white;
 }
-#login-btn {
+#login-btn, #login-btn-offcanvas {
     background-color: #F5C518;
     border-radius: 18px;
 }
-#login-btn:hover {
+#login-btn:hover, #login-btn-offcanvas:hover {
     background-color: white;
     color: #121212;
 }
