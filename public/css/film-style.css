@@ -149,6 +149,10 @@ ul.navbar-access-offcanvas {
 .nav-link:focus{
     color: #F5C518;
 }
+.nav-link.show {
+    color: white !important;
+}
+
 #title-brand{
     font-family: "Amatic SC";
     font-size: 30px;
@@ -329,13 +333,18 @@ input[type="search"]::-webkit-search-results-decoration {
     z-index: 10;
 }
 .delete-film-form button {
-    width: 170px
+    width: 115px;
+    border-radius: 18px;
 }
 .modify-film-btn {
     position: absolute;
     right: 0;
     z-index: 10;
-    width: 170px;
+    width: 115px;
+    border-radius: 18px;
+}
+.delete-review-form button {
+    border-radius: 18px;
 }
 
 .custom-alert {

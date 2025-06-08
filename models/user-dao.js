@@ -4,11 +4,11 @@
 const db = require("../db.js");
 const bcrypt = require("bcrypt");
 
-exports.registerUser = function(username, email, password, birthday, user_type) {
+exports.registerUser = function(username, email, password, user_type) {
     return new Promise((resolve, reject) => {
         const sql = `
-            INSERT INTO User (username, email, hash_password, birthday, user_type)
-            VALUES (?, ?, ?, ?, ?)
+            INSERT INTO User (username, email, hash_password, user_type)
+            VALUES (?, ?, ?, ?)
         `;
         bcrypt.hash(password, 10).then(hash => {
             db.run(sql,
@@ -16,7 +16,6 @@ exports.registerUser = function(username, email, password, birthday, user_type) 
                     username,
                     email,
                     hash,
-                    birthday,
                     user_type
                 ], function(err) {
                     if(err) {
@@ -73,3 +72,31 @@ exports.getUserInfoById = function(id) {
         })
     });
 }
+
+// Controlla se l'utente ha già votato questa recensione
+exports.getUserLikeForReview = function(reviewId, userId) {
+    return new Promise((resolve, reject) => {
+        const sql = `SELECT type FROM Review_Like WHERE review_id = ? AND user_id = ?`;
+        db.get(sql, [reviewId, userId], function(err, row) {
+            if (err) reject(err);
+            else resolve(row); // row sarà undefined se non ha ancora votato
+        });
+    });
+};
+
+exports.getUserReviews = function(userId) {
+    return new Promise((resolve, reject) => {
+        const sql = `
+            SELECT r.review_id, r.rating, r.title, r.comment, r.thumbs_up, r.thumbs_down,
+                   f.film_id, f.film_title, f.poster
+            FROM Reviews r
+            JOIN Film f ON r.film_id = f.film_id
+            WHERE r.user_id = ?
+            ORDER BY r.upload_date DESC
+        `;
+        db.all(sql, [userId], function(err, rows) {
+            if (err) reject(err);
+            else resolve(rows);
+        });
+    });
+};

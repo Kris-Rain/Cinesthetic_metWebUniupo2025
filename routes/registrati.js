@@ -42,17 +42,6 @@ router.post("/",
             .isLength({ max: 16, min: 8 })
             .isStrongPassword(),
         check("email", "Inserire un indirizzo mail valido").trim().isEmail(),
-        check("birthday").notEmpty().withMessage("Data di Nascita richiesta"),
-        check("birthday").custom((value) => {
-            const date = new Date(value);
-            const today = new Date();
-            if (date >= today) {
-                return Promise.reject(
-                    "La data di nascita deve essere precedente alla data odierna."
-                );
-            }
-            return true;
-        }),
         check("confirmPassword").custom((value, { req }) => {
             return value === req.body.password
                 ? Promise.resolve("Ok.")
@@ -77,7 +66,6 @@ router.post("/",
                     success: null,
                     message: errorMessages.join(", "),
                     allGenres,
-                    date: req.body.birthday,
                     username: req.body.username,
                     email: req.body.email,
                     password: "",
@@ -92,7 +80,6 @@ router.post("/",
                     req.body.username,
                     req.body.email,
                     req.body.password,
-                    req.body.birthday,
                     1
                 );
 
@@ -113,7 +100,6 @@ router.post("/",
                         isLogged: false,
                         success: null,
                         message: errorMessages.join(", "),
-                        date: req.body.birthday,
                         allGenres,
                         username: req.body.username,
                         email: req.body.email,

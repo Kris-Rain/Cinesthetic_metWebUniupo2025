@@ -3,6 +3,8 @@
 const express = require("express");
 const router = express.Router();
 const filmDao = require("../models/film-dao");
+const userDao = require("../models/user-dao");
+const reviewDao = require("../models/review-dao");
 const { isAdmin, isAuthenticated } = require("../public/js/middlewares");
 const { check, validationResult } = require("express-validator");
 
@@ -73,7 +75,7 @@ router.get("/:id", async function (req, res, next) {
             filmId
         );
         const allGenres = await filmDao.getAllGenres();
-        const reviews = await filmDao.getMovieReviews(filmId);
+        const reviews = await reviewDao.getMovieReviews(filmId);
 
         const isAdmin = req.isAuthenticated() && req.user.type === 0;
 
@@ -95,16 +97,26 @@ router.get("/:id", async function (req, res, next) {
             isAdmin,
             reviews,
         });
-    } catch (error) {
-        console.log(error);
-        next(error);
+    } catch (err) {
+        console.log(err);
+        next(err);
     }
 });
 
 router.post("/:id/delete", isAdmin, async (req, res, next) => {
     try {
-        await filmDao.deleteFilm(req.params.id);
+        await filmDao.deleteMovie(req.params.id);
         res.redirect("/homepage?deleteSuccess=1&id=" + req.params.id);
+    } catch (err) {
+        next(err);
+    }
+});
+
+router.post('/:filmId/review/:reviewId/delete', isAdmin, async (req, res) => {
+    const { filmId, reviewId } = req.params;
+    try {
+        await reviewDao.deleteReview(reviewId, filmId);
+        res.redirect(`/film/${filmId}?deleteReviewSuccess=1&id=${reviewId}`);
     } catch (err) {
         next(err);
     }
@@ -242,9 +254,7 @@ router.post("/:id/edit", isAdmin, validationChecks, async (req, res, next) => {
     }
 });
 
-router.post(
-    "/:id/review",
-    isAuthenticated,
+router.post("/:id/review", isAuthenticated,
     [
         check("rating")
             .notEmpty()
@@ -275,7 +285,7 @@ router.post(
                 const screenWritersByFilmId =
                     await filmDao.getScreenwritersById(filmId);
                 const allGenres = await filmDao.getAllGenres();
-                const reviews = await filmDao.getMovieReviews(filmId);
+                const reviews = await reviewDao.getMovieReviews(filmId);
                 const isAdmin = req.isAuthenticated() && req.user.type === 0;
 
                 return res.render("film", {
@@ -300,7 +310,7 @@ router.post(
             const { rating, title, comment } = req.body;
 
             // Previeni la creazione di recensioni duplicate
-            const existing = await filmDao.getUserReviewForFilm(userId, filmId);
+            const existing = await reviewDao.getUserReviewForFilm(userId, filmId);
 
             if (existing) {
                 // Recupera i dati necessari per la view
@@ -309,7 +319,7 @@ router.post(
                 const screenWritersByFilmId =
                     await filmDao.getScreenwritersById(filmId);
                 const allGenres = await filmDao.getAllGenres();
-                const reviews = await filmDao.getMovieReviews(filmId);
+                const reviews = await reviewDao.getMovieReviews(filmId);
                 const isAdmin = req.isAuthenticated() && req.user.type === 0;
 
                 return res.render("film", {
@@ -326,7 +336,7 @@ router.post(
                 });
             }
 
-            await filmDao.addReview({
+            await reviewDao.addReview({
                 film_id: filmId,
                 user_id: userId,
                 rating,
@@ -349,20 +359,20 @@ router.post("/:filmId/review/:reviewId/thumbs-up", isAuthenticated, async (req, 
         try {
             const userId = req.user.id;
             const reviewId = req.params.reviewId;
-            const existing = await filmDao.getUserLikeForReview(
+            const existing = await userDao.getUserLikeForReview(
                 reviewId,
                 userId
             );
 
             if (!existing || existing.type !== "like") {
                 // Se non ha mai votato o aveva messo dislike, aggiorna
-                await filmDao.setReviewLike(reviewId, userId, "like");
+                await reviewDao.setReviewLike(reviewId, userId, "like");
                 // Aggiorna i contatori nella tabella Reviews
                 if (!existing) {
-                    await filmDao.setThumbsUp(reviewId);
+                    await reviewDao.setThumbsUp(reviewId);
                 } else if (existing.type === "dislike") {
-                    await filmDao.setThumbsUp(reviewId);
-                    await filmDao.setThumbsDown(reviewId, -1); // serve una funzione per decrementare
+                    await reviewDao.setThumbsUp(reviewId);
+                    await reviewDao.setThumbsDown(reviewId, -1); // serve una funzione per decrementare
                 }
             }
             res.redirect(`/film/${req.params.filmId}`);
@@ -376,18 +386,18 @@ router.post("/:filmId/review/:reviewId/thumbs-down", isAuthenticated, async (req
         try {
             const userId = req.user.id;
             const reviewId = req.params.reviewId;
-            const existing = await filmDao.getUserLikeForReview(
+            const existing = await userDao.getUserLikeForReview(
                 reviewId,
                 userId
             );
 
             if (!existing || existing.type !== "dislike") {
-                await filmDao.setReviewLike(reviewId, userId, "dislike");
+                await reviewDao.setReviewLike(reviewId, userId, "dislike");
                 if (!existing) {
-                    await filmDao.setThumbsDown(reviewId);
+                    await reviewDao.setThumbsDown(reviewId);
                 } else if (existing.type === "like") {
-                    await filmDao.setThumbsDown(reviewId);
-                    await filmDao.setThumbsUp(reviewId, -1); // serve una funzione per decrementare
+                    await reviewDao.setThumbsDown(reviewId);
+                    await reviewDao.setThumbsUp(reviewId, -1); // serve una funzione per decrementare
                 }
             }
             res.redirect(`/film/${req.params.filmId}`);

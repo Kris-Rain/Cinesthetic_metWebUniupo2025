@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const filmDao = require("../models/film-dao.js");
+const reviewDao = require("../models/review-dao.js");
 const { query } = require("express-validator");
 
 // Homepage route
@@ -14,7 +15,7 @@ async function renderHomepage(req, res, next) {
         const topRatedMovies = await filmDao.getTopRatedMovies();
         const allMovies = await filmDao.getAllMovies();
         const allGenres = await filmDao.getAllGenres();
-        const bestReviews = await filmDao.getBestReviews();
+        const bestReviews = await reviewDao.getBestReviews();
         const trendingMovises = await filmDao.getTrendingMovies();
         const recommemdedMovies = await filmDao.getRecommendedMovies();
 
@@ -24,6 +25,7 @@ async function renderHomepage(req, res, next) {
         if (req.query.loginSuccess === '1') success = 'Login effettuato con successo!';
         if (req.query.insertSuccess === '1') success = `Film con id: ${req.query.id} inserito con successo!`;
         if (req.query.deleteSuccess === '1') success = `Film con id: ${req.query.id} eliminato con successo!`;
+        if (req.query.deleteReviewSuccess === '1') success = `Recensione con id: ${req.query.id} eliminata con successo!`;
 
         console.log(req.user);
         // Render homepage.ejs with movies and reviews

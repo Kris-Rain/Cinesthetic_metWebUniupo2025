@@ -113,7 +113,7 @@
                                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-pencil" viewBox="0 0 16 16">
                                         <path d="M12.146.854a.5.5 0 0 1 .708 0l2.292 2.292a.5.5 0 0 1 0 .708l-9.439 9.439a.5.5 0 0 1-.168.11l-4 1.5a.5.5 0 0 1-.65-.65l1.5-4a.5.5 0 0 1 .11-.168l9.439-9.439zM11.207 2.5 13.5 4.793 12.5 5.793 10.207 3.5l1-1zM10.5 4.207 12.793 6.5l-8.439 8.439-1.5.5.5-1.5L10.5 4.207z"/>
                                     </svg>
-                                    <span>Modifica film</span>
+                                    <span>Modifica</span>
                                 </a>
                                 <form class="delete-film-form" method="POST" action="/film/<%= filmById.film_id %>/delete" onsubmit="return confirm('Sei sicuro di voler eliminare questo film?');">
                                     <button type="submit" class="btn btn-danger">
@@ -121,7 +121,7 @@
                                             <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5.5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6zm3 .5a.5.5 0 0 1 .5-.5h.5a.5.5 0 0 1 0 1h-.5a.5.5 0 0 1-.5-.5z"/>
                                             <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1-1V1a1 1 0 0 0-1-1h-7a1 1 0 0 0-1 1v1a1 1 0 0 1-1 1H1.5a.5.5 0 0 0 0 1h1.086l.82 9.193A2 2 0 0 0 5.397 15h5.206a2 2 0 0 0 1.991-1.807l.82-9.193H14.5a.5.5 0 0 0 0-1h-1zm-11-1V1a2 2 0 0 1 2-2h7a2 2 0 0 1 2 2v1h-11z"/>
                                         </svg>
-                                        <span>Elimina film</span>
+                                        <span>Elimina</span>
                                     </button>
                                 </form>
                             </div>
@@ -202,7 +202,17 @@
                         </div>
                         <% if (reviews && reviews.length > 0) { %>
                             <% reviews.forEach(function(review) { %>
-                                <div class="card user-review">
+                                <div class="card user-review position-relative">
+                                    <% if (isAdmin) { %>
+                                        <form class="delete-review-form position-absolute top-0 end-0 m-2" method="POST" action="/film/<%= filmById.film_id %>/review/<%= review.review_id %>/delete" onsubmit="return confirm('Sei sicuro di voler eliminare questa recensione?');">
+                                            <button type="submit" class="btn btn-danger btn-sm">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
+                                                    <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5.5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6zm3 .5a.5.5 0 0 1 .5-.5h.5a.5.5 0 0 1 0 1h-.5a.5.5 0 0 1-.5-.5z"/>
+                                                    <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1-1V1a1 1 0 0 0-1-1h-7a1 1 0 0 0-1 1v1a1 1 0 0 1-1 1H1.5a.5.5 0 0 0 0 1h1.086l.82 9.193A2 2 0 0 0 5.397 15h5.206a2 2 0 0 0 1.991-1.807l.82-9.193H14.5a.5.5 0 0 0 0-1h-1zm-11-1V1a2 2 0 0 1 2-2h7a2 2 0 0 1 2 2v1h-11z"/>
+                                                </svg>
+                                            </button>
+                                        </form>
+                                    <% } %>
                                     <div class="card-body">
                                         <div id="user-name-rating">
                                             <span class="card-title"><%= review.username %></span>

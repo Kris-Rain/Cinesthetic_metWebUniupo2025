@@ -10,7 +10,10 @@ const db = new sqlite.Database(DBSOURCE, (err) => {
         // cannot open database
         console.error(err.message);
         throw err;
-    } else console.log('Database opened correctly');
+    } else {
+        console.log('Database opened correctly');
+        db.run('PRAGMA foreign_keys = ON;');
+    }
 });
 
 module.exports = db;

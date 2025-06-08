@@ -120,6 +120,7 @@
                             <% if(isLogged) { %>
                             <div class="navbar-brand dropdown" href="#">
                                 <a
+                                    class="dropdown-toggle"
                                     id="user-name-offcanvas"
                                     href="#"
                                     role="button"
@@ -130,7 +131,7 @@
                                 </a>
                                 <ul class="dropdown-menu dropdown-menu-end dropdown-user">
                                     <li>
-                                        <a class="dropdown-item" href="#">Il tuo profilo</a>
+                                        <a class="dropdown-item" href="/profile">Il tuo profilo</a>
                                     </li>
                                     <li><hr class="dropdown-divider"/></li>
                                     <% if(user && user.type === 0) { %>
@@ -244,6 +245,7 @@
             <% if(isLogged) { %>
             <div class="navbar-brand dropdown" href="#">
                 <a
+                    class="dropdown-toggle"
                     id="user-name"
                     href="#"
                     role="button"
@@ -254,7 +256,7 @@
                 </a>
                 <ul class="dropdown-menu dropdown-menu-end dropdown-user">
                     <li>
-                        <a class="dropdown-item" href="#">Il tuo profilo</a>
+                        <a class="dropdown-item" href="/profile">Il tuo profilo</a>
                     </li>
                     <li><hr class="dropdown-divider"/></li>
                     <% if(user && user.type === 0) { %>

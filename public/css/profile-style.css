@@ -1,0 +1,55 @@
+#subtitle-profile {
+    color: #F5C518;
+    padding: 5px;
+    margin-top: 20px;
+}
+.user-review {
+    padding: 10px;
+}
+.user-review a {
+    text-decoration: none;
+    color: #F5C518;
+}
+.user-review a:hover {
+    color: white;
+}
+.bi-hand-thumbs-up-fill:hover, .bi-hand-thumbs-down-fill:hover{
+    color: #F5C518;
+    cursor: auto !important
+}
+.user-review .card-text {
+    max-height: 120px;
+    overflow-y: auto;
+    word-break: break-word;
+}
+.poster-col {
+    width: 150px;
+    min-width: 120px;
+    max-width: 180px;
+}
+.film-poster {
+    width: 130px;
+    max-width: 100%;
+    height: auto;
+}
+
+@media (max-width: 576px) {
+    .poster-col {
+        width: 60px;
+        min-width: 40px;
+        max-width: 80px;
+    }
+    .film-poster {
+        width: 45px;
+        max-width: 100%;
+        height: auto;
+    }
+    .fw-bold.mt-2 {
+        font-size: 0.85rem;
+        word-break: break-word;
+    }
+    .user-review .flex-grow-1 {
+        min-width: 0;
+        word-break: break-word;
+    }
+}

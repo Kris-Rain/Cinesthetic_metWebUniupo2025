@@ -101,8 +101,6 @@
     color: white;
 }
 
-
-
 @media only screen and (max-width: 575px) {
     .col .card {
         width: 180px;
@@ -110,7 +108,7 @@
         margin-right: auto;
     }
     .card-img-top {
-        height: 220px !important; /* più bassa su mobile */
+        height: 270px !important; /* più bassa su mobile */
     }
     .container {
         padding-left: 8px;

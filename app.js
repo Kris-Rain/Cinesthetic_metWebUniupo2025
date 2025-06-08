@@ -17,6 +17,7 @@ const registerRouter = require("./routes/registrati");
 const insertFilmRouter = require("./routes/admin-panel");
 const searchRouter = require("./routes/search");
 const filterRouter = require("./routes/filter");
+const profileRouter = require("./routes/profile");
 
 // Create Express app
 const app = express();
@@ -81,14 +82,15 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 // Routers
-app.use('/homepage', homepageRouter);
 app.use('/', homepageRouter);
+app.use('/homepage', homepageRouter);
 app.use('/film', filmPageRouter);
 app.use('/accedi', loginRouter);
 app.use('/registrati', registerRouter);
 app.use('/admin-panel', isAdmin, insertFilmRouter);
 app.use('/search', searchRouter);
 app.use('/filter', filterRouter);
+app.use('/profile', isAuthenticated, profileRouter);
 
 // 404 handler
 app.use(function (req, res, next) {

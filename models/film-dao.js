@@ -1,22 +1,6 @@
 "use strict";
 
-// DAO (Data Access Object) module for accessing movies
 const db = require("../db.js");
-
-function getDateTime() {
-    const now = new Date();
-    const yyyy = now.getFullYear();
-    // aggiungo 1 al mese perché in JavaScript i mesi partono da 0
-    // e uso padStart per garantire che il mese e il giorno siano sempre a 2 cifre
-    // anche con le cifre minori di 10
-    // (es. 01, 02, ..., 12)
-    const mm = String(now.getMonth() + 1).padStart(2, "0");
-    const dd = String(now.getDate()).padStart(2, "0");
-    const hh = String(now.getHours()).padStart(2, "0");
-    const min = String(now.getMinutes()).padStart(2, "0");
-    const ss = String(now.getSeconds()).padStart(2, "0");
-    return `${yyyy}-${mm}-${dd} ${hh}:${min}:${ss}`;
-}
 
 exports.getAllGenres = function () {
     return new Promise((resolve, reject) => {
@@ -100,25 +84,6 @@ exports.getTopRatedMovies = function () {
             GROUP BY f.film_id
             HAVING review_count > 0
             ORDER BY rating DESC
-            LIMIT 10
-        `;
-        db.all(sql, [], function (err, rows) {
-            if (err) reject(err);
-            else resolve(rows);
-        });
-    });
-};
-
-exports.getBestReviews = function () {
-    return new Promise((resolve, reject) => {
-        const sql = `
-            SELECT r.*, 
-                f.film_title, 
-                u.username
-            FROM Reviews r
-            JOIN Film f ON r.film_id = f.film_id
-            JOIN User u ON r.user_id = u.email
-            ORDER BY r.rating DESC
             LIMIT 10
         `;
         db.all(sql, [], function (err, rows) {
@@ -241,7 +206,7 @@ exports.addMovie = async function (movieData) {
                 movieData.duration,
                 trailer_url,
                 movieData.director,
-                getDateTime(), // Formato YYYY-MM-DD HH:MM:SS
+                new Date().toISOString().slice(0, 19).replace('T', ' '), // Formato YYYY-MM-DD HH:MM:SS
             ],
             async function (err) {
                 if (err) return reject(err);
@@ -409,7 +374,7 @@ exports.updateMovie = async function (id, movieData) {
     });
 };
 
-exports.deleteFilm = function (filmId) {
+exports.deleteMovie = function (filmId) {
     return new Promise((resolve, reject) => {
         db.run("DELETE FROM Film WHERE film_id = ?", [filmId], function (err) {
             if (err) reject(err);
@@ -474,132 +439,21 @@ exports.getScreenwritersById = function (filmId) {
     });
 };
 
-exports.getMovieReviews = function (movieId) {
-    return new Promise((resolve, reject) => {
-        const sql = `
-            SELECT r.review_id, r.rating, r.title, r.comment, r.thumbs_up, r.thumbs_down, u.username
-            FROM Reviews r
-            JOIN User u ON r.user_id = u.user_id
-            WHERE r.film_id = ?
-            ORDER BY r.upload_date DESC
-        `;
-        db.all(sql, [movieId], function (err, rows) {
-            if (err) reject(err);
-            else resolve(rows);
-        });
-    });
-};
-
 exports.updateFilmAvgRating = function (filmId) {
     return new Promise((resolve, reject) => {
         const sql = `
             UPDATE Film
             SET avg_user_rating = (
-                SELECT ROUND(AVG(rating), 1)
+                SELECT CASE 
+                    WHEN COUNT(*) = 0 THEN NULL
+                    ELSE ROUND(AVG(rating), 1)
+                END
                 FROM Reviews
                 WHERE film_id = ?
             )
             WHERE film_id = ?
         `;
         db.run(sql, [filmId, filmId], function (err) {
-            if (err) reject(err);
-            else resolve();
-        });
-    });
-};
-
-exports.addReview = function (reviewData) {
-    return new Promise((resolve, reject) => {
-        const sql = `
-            INSERT INTO Reviews (film_id, user_id, rating, title, comment, thumbs_up, thumbs_down, upload_date)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-        `;
-        db.run(
-            sql,
-            [
-                reviewData.film_id,
-                reviewData.user_id,
-                reviewData.rating,
-                reviewData.title,
-                reviewData.comment,
-                reviewData.thumbs_up || 0,
-                reviewData.thumbs_down || 0,
-                getDateTime(),
-            ],
-            function (err) {
-                if (err) reject(err);
-                else resolve({ id: this.lastID, ...reviewData });
-            }
-        );
-    });
-};
-
-// Funzione per ottenere la recensione di un utente per un film specifico
-// Funzionalmente mi serve per evitare che un utente possa inserire più recensioni per lo stesso film
-exports.getUserReviewForFilm = function (userId, filmId) {
-    return new Promise((resolve, reject) => {
-        const sql = `
-            SELECT * FROM Reviews
-            WHERE user_id = ? AND film_id = ?
-            LIMIT 1
-        `;
-        db.get(sql, [userId, filmId], function (err, row) {
-            if (err) reject(err);
-            else resolve(row);
-        });
-    });
-};
-
-exports.setThumbsUp = function (reviewId, inc = 1) {
-    return new Promise((resolve, reject) => {
-        const sql = `UPDATE Reviews SET thumbs_up = thumbs_up + ? WHERE review_id = ?`;
-        db.run(sql, [inc, reviewId], function (err) {
-            if (err) reject(err);
-            else resolve();
-        });
-    });
-};
-
-exports.setThumbsDown = function (reviewId, inc = 1) {
-    return new Promise((resolve, reject) => {
-        const sql = `UPDATE Reviews SET thumbs_down = thumbs_down + ? WHERE review_id = ?`;
-        db.run(sql, [inc, reviewId], function (err) {
-            if (err) reject(err);
-            else resolve();
-        });
-    });
-};
-
-// Controlla se l'utente ha già votato questa recensione
-exports.getUserLikeForReview = function(reviewId, userId) {
-    return new Promise((resolve, reject) => {
-        const sql = `SELECT type FROM Review_Like WHERE review_id = ? AND user_id = ?`;
-        db.get(sql, [reviewId, userId], function(err, row) {
-            if (err) reject(err);
-            else resolve(row); // row sarà undefined se non ha ancora votato
-        });
-    });
-};
-
-// Inserisce o aggiorna il like/dislike
-exports.setReviewLike = async function(reviewId, userId, type) {
-    return new Promise((resolve, reject) => {
-        const sql = `
-            INSERT INTO Review_Like (review_id, user_id, type)
-            VALUES (?, ?, ?)
-            ON CONFLICT(review_id, user_id) DO UPDATE SET type=excluded.type
-        `;
-        db.run(sql, [reviewId, userId, type], function(err) {
-            if (err) reject(err);
-            else resolve();
-        });
-    });
-};
-
-exports.deleteReview = function (reviewId, userId) {
-    return new Promise((resolve, reject) => {
-        const sql = "DELETE FROM Reviews WHERE id = ? AND user_id = ?";
-        db.run(sql, [reviewId, userId], function (err) {
             if (err) reject(err);
             else resolve();
         });
