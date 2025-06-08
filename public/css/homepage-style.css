@@ -68,7 +68,7 @@ header{
         margin: 5px !important; /* Maintain spacing between cards */
         padding: 0 !important; /* Remove padding */
     }
-    .card-img-top {
+    .card-img-main {
         height: 150px !important; /* Further reduce image height */
     }
     #film-name {
@@ -83,6 +83,9 @@ header{
     .main-content {
         margin: 0 !important; /* Remove left margin */
     }
+    .carousel-caption h5{
+        font-size: 0.75rem !important;
+    }
 }
 @media only screen and (max-width: 1150px){
     .carousel-item{
@@ -93,6 +96,11 @@ header{
    #title-brand-footer{
     display: none !important;
    } 
+}
+@media only screen and (max-width: 768px) and (min-width: 470px){
+    .carousel-caption h5{
+        font-size: 1rem !important;
+    }
 }
 @media only screen and (min-width: 1690px){
     .carousel-item{
@@ -314,12 +322,12 @@ input[type="search"]::-webkit-search-results-decoration {
     border: 0;
     border-radius: 15px;
 }
-.card-img-top{
+.card-img-main{
     height: 265px;
     border-top-left-radius: 10px;
     border-top-right-radius: 10px;
 }
-.card-img-top:hover{
+.card-img-main:hover{
     opacity: 0.7;
 }
 .card-title{
@@ -330,6 +338,7 @@ input[type="search"]::-webkit-search-results-decoration {
     align-items: center;
     justify-content: center;
     text-align: center;
+    font-size: 1rem;
 }
 #card-titles{
     width: 90px;
@@ -469,8 +478,9 @@ input[type="search"]::-webkit-search-results-decoration {
     padding-bottom: 0;
     z-index: 1;
     bottom: 0.5rem;
-    padding-left: 25%;
-    padding-right: 25%;
+}
+.carousel-caption h5{
+    text-shadow: 0 0 10px rgba(0, 0, 0, 0.7);
 }
 .img-gradient::after{
     content: '';

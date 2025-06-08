@@ -34,7 +34,7 @@
                                     <a href="/film/<%= film.film_id %>">
                                         <img
                                             src="img/<%= film.poster %>.jpg"
-                                            class="card-img-top"
+                                            class="card-img-top card-img-search"
                                             alt="<%= film.film_title %>"
                                         />
                                         <span class="badge rating-badge">
@@ -42,7 +42,7 @@
                                         </span>
                                     </a>
                                     <h5 class="card-title">
-                                        <a href="/film/<%= film.film_id %>" id="film-name">
+                                        <a href="/film/<%= film.film_id %>" id="film-name-search">
                                             <%= film.film_title %>
                                         </a>
                                     </h5>
