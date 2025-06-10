@@ -16,7 +16,7 @@ async function renderHomepage(req, res, next) {
         const allMovies = await filmDao.getAllMovies();
         const allGenres = await filmDao.getAllGenres();
         const bestReviews = await reviewDao.getBestReviews();
-        const trendingMovises = await filmDao.getTrendingMovies();
+        const trendingMovies = await filmDao.getTrendingMovies();
         const recommemdedMovies = await filmDao.getRecommendedMovies();
 
         let success = null;
@@ -36,7 +36,7 @@ async function renderHomepage(req, res, next) {
             message: req.query.message || null,
             allMovies,
             latestMovies,
-            trendingMovises,
+            trendingMovies,
             recommemdedMovies,
             bestReviews,
             topRatedMovies,

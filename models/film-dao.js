@@ -17,7 +17,7 @@ exports.getAllMovies = function () {
     return new Promise((resolve, reject) => {
         const sql = `
             SELECT f.*, 
-            COALESCE(AVG(r.rating), 0) as rating
+                COALESCE(AVG(r.rating), 0) as rating
             FROM Film f
             LEFT JOIN Reviews r ON f.film_id = r.film_id
             GROUP BY f.film_id
@@ -49,7 +49,7 @@ exports.getMovieById = function (id) {
                     trailer: row.trailer,
                     director: row.director,
                     avg_user_rating: row.avg_user_rating,
-                    added_date: row.added_date,
+                    upload_date: row.upload_date,
                 });
         });
     });
@@ -59,11 +59,11 @@ exports.getLatestMovies = function () {
     return new Promise((resolve, reject) => {
         const sql = `
             SELECT f.*, 
-            COALESCE(AVG(r.rating), 0) as rating
+                COALESCE(AVG(r.rating), 0) as rating
             FROM Film f
             LEFT JOIN Reviews r ON f.film_id = r.film_id
             GROUP BY f.film_id
-            ORDER BY f.added_date DESC
+            ORDER BY f.upload_date DESC
             LIMIT 15
         `;
         db.all(sql, (err, rows) => {
@@ -97,8 +97,8 @@ exports.getTrendingMovies = function () {
     return new Promise((resolve, reject) => {
         const sql = `
             SELECT f.*, 
-            COALESCE(AVG(r.rating), 0) as avg_user_rating, 
-            COUNT(r.review_id) as review_count
+                COALESCE(AVG(r.rating), 0) as avg_user_rating, 
+                COUNT(r.review_id) as review_count
             FROM Film f
             LEFT JOIN Reviews r ON f.film_id = r.film_id
             WHERE r.upload_date >= DATE('now', '-30 days')
@@ -117,8 +117,8 @@ exports.getRecommendedMovies = function () {
     return new Promise((resolve, reject) => {
         const sql = `
             SELECT f.*, 
-            COALESCE(AVG(r.rating), 0) as avg_user_rating, 
-            COUNT(r.review_id) as review_count
+                COALESCE(AVG(r.rating), 0) as avg_user_rating, 
+                COUNT(r.review_id) as review_count
             FROM Film f
             LEFT JOIN Reviews r ON f.film_id = r.film_id
             GROUP BY f.film_id
@@ -190,7 +190,7 @@ exports.filterMovies = function ({ genre, minRating, maxDuration }) {
 exports.addMovie = async function (movieData) {
     return new Promise((resolve, reject) => {
         const sql = `
-            INSERT INTO Film (poster, film_title, original_film_title, release_date, plot, duration, trailer, director, added_date)
+            INSERT INTO Film (poster, film_title, original_film_title, release_date, plot, duration, trailer, director, upload_date)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
         `;
         const trailer_url = `https://www.youtube.com/embed/${movieData.trailer}?autoplay=1&mute=1`;
@@ -206,7 +206,7 @@ exports.addMovie = async function (movieData) {
                 movieData.duration,
                 trailer_url,
                 movieData.director,
-                new Date().toISOString().slice(0, 19).replace('T', ' '), // Formato YYYY-MM-DD HH:MM:SS
+                new Date().toISOString().slice(0, 19).replace("T", " "), // Formato YYYY-MM-DD HH:MM:SS
             ],
             async function (err) {
                 if (err) return reject(err);

@@ -51,33 +51,27 @@
         class="row gx-0 row-cols-1 row-cols-md-3 justify-content-start film-list"
         id="film-list-trending"
     >
-    <% trendingMovises.forEach(function(review, index) { %>
-        <% if(review.rating > 8) { %>
-            <% latestMovies.forEach(function(film, index) { %>
-                <% if(review.film_id == film.film_id) { %>
-                    <div class="col-card">
-                        <div class="card h-100">
-                            <a href="/film/<%= film.film_id %>">
-                                <img
-                                    src="img/<%= film.poster %>.jpg"
-                                    class="card-img-top card-img-main"
-                                    alt="<%= film.film_title %>"
-                                />
-                                <span class="badge rating-badge">
-                                    <%= film.avg_user_rating ? film.avg_user_rating : 'N/A' %>
-                                </span>
-                            </a>
-                            <h5 class="card-title">
-                                <% console.log(film.film_id) %>
-                                <a href="/film/<%= film.film_id %>" id="film-name">
-                                    <%= film.film_title %>
-                                </a>
-                            </h5>
-                        </div>
-                    </div>
-                <% } %>
-            <% }) %>
-        <% } %>
+    <% trendingMovies.forEach(function(film, index) { %>
+        <div class="col-card">
+            <div class="card h-100">
+                <a href="/film/<%= film.film_id %>">
+                    <img
+                        src="img/<%= film.poster %>.jpg"
+                        class="card-img-top card-img-main"
+                        alt="<%= film.film_title %>"
+                    />
+                    <span class="badge rating-badge">
+                        <%= film.avg_user_rating ? film.avg_user_rating : 'N/A' %>
+                    </span>
+                </a>
+                <h5 class="card-title">
+                    <% console.log(film.film_id) %>
+                    <a href="/film/<%= film.film_id %>" id="film-name">
+                        <%= film.film_title %>
+                    </a>
+                </h5>
+            </div>
+        </div>
     <% }) %>
     </div>
     <script>
