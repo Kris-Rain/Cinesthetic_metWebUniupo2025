@@ -1,0 +1,29 @@
+User: Admin01
+Email: admin01@gmail.com
+Pass: Admin@01
+User type: 0
+
+User: cinefilo83
+Email: cinefilo83@gmail.com
+Pass: Prova@01
+User type: 1
+
+User: Born2Review
+Email: born2review@gmail.com
+Pass: Prova@02
+User type: 1
+
+User: veronica_reads
+Email: veronica.reads@gmail.com
+Pass: Prova@03
+User type: 1
+
+User: leo.simplelife
+Email: leosimplelife@yahoo.it
+Pass: Prova@04
+User type: 1
+
+User: sara_17
+Email: sara_17@libero.it
+Pass: Prova@05
+User type: 1
