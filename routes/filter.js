@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const filmDao = require('../models/film-dao');
+const reviewDao = require('../models/review-dao');
 
 // Rotta GET per la ricerca film avanzata
 router.get('/', async (req, res, next) => {
@@ -17,7 +18,7 @@ router.get('/', async (req, res, next) => {
         const hasAdvancedFilters = genre || minRating !== null || maxDuration !== null;
 
         if (filter === 'best' && !hasAdvancedFilters) {
-            results = await filmDao.getBestReviews();
+            results = await reviewDao.getBestReviews();
         } else if (filter === 'top' && !hasAdvancedFilters) {
             results = await filmDao.getTopRatedMovies();
         } else {
