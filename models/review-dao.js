@@ -6,14 +6,14 @@ const filmDao = require("./film-dao.js");
 exports.getBestReviews = function () {
     return new Promise((resolve, reject) => {
         const sql = `
-            SELECT r.*, 
-                f.film_title, 
-                u.username
-            FROM Reviews r
-            JOIN Film f ON r.film_id = f.film_id
-            JOIN User u ON r.user_id = u.email
-            ORDER BY r.rating DESC
-            LIMIT 10
+            SELECT f.*, 
+                   COALESCE(MAX(r.thumbs_up), 0) AS max_thumbs_up
+            FROM Film f
+            LEFT JOIN Reviews r ON f.film_id = r.film_id
+            GROUP BY f.film_id
+            HAVING max_thumbs_up > 3
+            ORDER BY max_thumbs_up DESC
+            LIMIT 15
         `;
         db.all(sql, [], function (err, rows) {
             if (err) reject(err);
@@ -54,7 +54,7 @@ exports.addReview = function (reviewData) {
                 reviewData.comment,
                 reviewData.thumbs_up || 0,
                 reviewData.thumbs_down || 0,
-                new Date().toISOString().slice(0, 19).replace('T', ' ') // Formato YYYY-MM-DD HH:MM:SS
+                new Date().toISOString().slice(0, 19).replace("T", " "), // Formato YYYY-MM-DD HH:MM:SS
             ],
             function (err) {
                 if (err) reject(err);
@@ -101,14 +101,14 @@ exports.setThumbsDown = function (reviewId, inc = 1) {
 };
 
 // Inserisce o aggiorna il like/dislike
-exports.setReviewLike = async function(reviewId, userId, type) {
+exports.setReviewLike = async function (reviewId, userId, type) {
     return new Promise((resolve, reject) => {
         const sql = `
             INSERT INTO Review_Like (review_id, user_id, type)
             VALUES (?, ?, ?)
             ON CONFLICT(review_id, user_id) DO UPDATE SET type=excluded.type
         `;
-        db.run(sql, [reviewId, userId, type], function(err) {
+        db.run(sql, [reviewId, userId, type], function (err) {
             if (err) reject(err);
             else resolve();
         });
@@ -122,7 +122,8 @@ exports.deleteReview = function (reviewId, filmId) {
             if (err) return reject(err);
 
             // Dopo aver eliminato la recensione, aggiorna la media del film
-            filmDao.updateFilmAvgRating(filmId)
+            filmDao
+                .updateFilmAvgRating(filmId)
                 .then(() => resolve())
                 .catch(reject);
         });
